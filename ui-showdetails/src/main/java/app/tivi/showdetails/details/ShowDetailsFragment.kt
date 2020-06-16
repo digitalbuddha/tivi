@@ -26,7 +26,6 @@ import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.TiviFragment
-import app.tivi.common.compose.observeWindowInsets
 import app.tivi.episodedetails.EpisodeDetailsFragment
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.util.TiviDateFormatter
@@ -61,7 +60,6 @@ class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.Factory
                     ShowDetailsViewState::pendingUiEffects,
                     uniqueOnly()
                 ),
-                observeWindowInsets(),
                 { pendingActions.sendBlocking(it) },
                 tiviDateFormatter!!,
                 textCreator!!

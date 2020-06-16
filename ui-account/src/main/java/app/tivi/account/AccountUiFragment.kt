@@ -24,7 +24,6 @@ import android.widget.FrameLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.TiviBottomSheetFragment
-import app.tivi.common.compose.observeWindowInsets
 import app.tivi.extensions.navigateToNavDestination
 import app.tivi.util.TiviDateFormatter
 import com.airbnb.mvrx.fragmentViewModel
@@ -53,7 +52,6 @@ class AccountUiFragment : TiviBottomSheetFragment(), AccountUiViewModel.FactoryP
         composeAccountUi(
             this,
             viewModel.observeAsLiveData(),
-            observeWindowInsets(),
             { pendingActions.sendBlocking(it) },
             tiviDateFormatter!!
         )

@@ -28,7 +28,6 @@ import androidx.compose.remember
 import androidx.compose.setValue
 import androidx.compose.state
 import androidx.compose.staticAmbientOf
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LiveData
 import androidx.ui.animation.Crossfade
 import androidx.ui.animation.DpPropKey
@@ -110,6 +109,7 @@ import app.tivi.common.compose.ProvideInsets
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.onSizeChanged
+import app.tivi.common.compose.systemBarsPadding
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.ImageType
@@ -135,7 +135,6 @@ val ShowDetailsTextCreatorAmbient = staticAmbientOf<ShowDetailsTextCreator>()
 fun ViewGroup.composeShowDetails(
     state: LiveData<ShowDetailsViewState>,
     pendingUiEffects: LiveData<List<UiEffect>>,
-    insets: LiveData<WindowInsetsCompat>,
     actioner: (ShowDetailsAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter,
     textCreator: ShowDetailsTextCreator
@@ -145,7 +144,7 @@ fun ViewGroup.composeShowDetails(
         ShowDetailsTextCreatorAmbient provides textCreator
     ) {
         MaterialThemeFromMdcTheme {
-            ProvideInsets(insets) {
+            ProvideInsets {
                 val viewState by state.observeAsState()
                 val uiEffects by pendingUiEffects.observeAsState(emptyList())
                 if (viewState != null) {
@@ -295,7 +294,7 @@ fun ShowDetails(
                     // Spacer to push up the content from under the navigation bar
                     val insets = InsetsAmbient.current
                     val spacerHeight = with(DensityAmbient.current) {
-                        8.dp + insets.bottom.toDp() + fabHeight.toDp() + 16.dp
+                        8.dp + insets.systemBars.bottom.toDp() + fabHeight.toDp() + 16.dp
                     }
                     Spacer(Modifier.preferredHeight(spacerHeight))
                 }
@@ -308,9 +307,9 @@ fun ShowDetails(
     ) {
         val insets = InsetsAmbient.current
 
-        val trigger = (backdropHeight - insets.top).coerceAtLeast(0)
+        val trigger = (backdropHeight - insets.systemBars.top).coerceAtLeast(0f)
 
-        if (insets.top > 0) {
+        if (insets.systemBars.top > 0) {
             val alpha = lerp(
                 startValue = 0.5f,
                 endValue = 1f,
@@ -318,7 +317,7 @@ fun ShowDetails(
                     (scrollerPosition.value / trigger).coerceIn(0f, 1f)
                 } else 0f
             )
-            val topInset = with(DensityAmbient.current) { insets.top.toDp() }
+            val topInset = with(DensityAmbient.current) { insets.systemBars.top.toDp() }
             Box(
                 Modifier.preferredHeight(topInset)
                     .fillMaxWidth()
@@ -345,9 +344,6 @@ fun ShowDetails(
         }
     }
 
-    val insets = InsetsAmbient.current
-    val bottomInset = with(DensityAmbient.current) { insets.bottom.toDp() }
-
     Column(
         modifier = Modifier.fillMaxWidth()
             .wrapContentHeight(Alignment.Bottom)
@@ -367,7 +363,8 @@ fun ShowDetails(
         ToggleShowFollowFloatingActionButton(
             isFollowed = viewState.isFollowed,
             onClick = { actioner(FollowShowToggleAction) },
-            modifier = Modifier.padding(end = 16.dp, bottom = 16.dp + bottomInset)
+            modifier = Modifier.padding(16.dp)
+                .systemBarsPadding(all = true)
                 .gravity(Alignment.End)
                 .onSizeChanged { fabHeight = it.height }
         )
@@ -696,7 +693,7 @@ private fun Seasons(
             !scrollerPosition.isAnimating
         ) {
             // Offset, to not scroll the item under the status bar, and leave a gap
-            val offset = InsetsAmbient.current.top +
+            val offset = InsetsAmbient.current.systemBars.top +
                 with(DensityAmbient.current) { 56.dp.toIntPx() }
 
             Modifier.onPositioned { coords ->

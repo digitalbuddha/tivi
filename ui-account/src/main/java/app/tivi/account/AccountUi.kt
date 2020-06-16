@@ -21,7 +21,6 @@ import androidx.compose.Composable
 import androidx.compose.Providers
 import androidx.compose.Recomposer
 import androidx.compose.getValue
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LiveData
 import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
@@ -66,13 +65,12 @@ import org.threeten.bp.ZoneOffset
 fun composeAccountUi(
     viewGroup: ViewGroup,
     state: LiveData<AccountUiViewState>,
-    insets: LiveData<WindowInsetsCompat>,
     actioner: (AccountUiAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter
 ): Any = viewGroup.setContent(Recomposer.current()) {
     MaterialThemeFromMdcTheme {
         Providers(TiviDateFormatterAmbient provides tiviDateFormatter) {
-            ProvideInsets(insets) {
+            ProvideInsets {
                 val viewState by state.observeAsState()
                 if (viewState != null) {
                     AccountUi(viewState!!, actioner)

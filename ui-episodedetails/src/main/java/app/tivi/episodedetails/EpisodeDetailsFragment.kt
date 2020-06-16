@@ -25,7 +25,6 @@ import android.widget.FrameLayout
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import app.tivi.TiviBottomSheetFragment
-import app.tivi.common.compose.observeWindowInsets
 import app.tivi.util.TiviDateFormatter
 import com.airbnb.mvrx.fragmentViewModel
 import kotlinx.coroutines.channels.Channel
@@ -61,7 +60,6 @@ class EpisodeDetailsFragment : TiviBottomSheetFragment(), EpisodeDetailsViewMode
 
             composeEpisodeDetails(
                 viewModel.observeAsLiveData(),
-                observeWindowInsets(),
                 { pendingActions.sendBlocking(it) },
                 tiviDateFormatter!!
             )
